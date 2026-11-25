@@ -1,33 +1,34 @@
-//Read.js
-
-// this imports info from the Movies.jsx file
-import Movies from "./Movies";
-import { useEffect, useState } from "react";
+// src/components/Read.jsx
+// This component fetches movie data from the backend and displays it using the Movies component
 import axios from "axios";
-const Read = () => {
-  const [myMovies, setMovies] = useState([])
+import { useState, useEffect } from "react";
+import Movies from "./Movies";
 
-// Fecthes data after the components number
-  useEffect(() => {
-    //do some http client work such as fecting the movie data from an API
-    axios.get('http://localhost:4000/api/movies')
-      .then((response) => {
-        console.log(response.data)
-        setMovies(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+// This component fetches movie data from the backend and displays it using the Movies component
+function Read() {
+    const [data, setData] = useState([]);
 
-
-
-  return (
-    <div>
-      <h2>This is my Read Component.</h2>
-      <Movies movies={myMovies} />
-    </div>
-  );
+    const Reload = () => {
+        console.log("Reloading movie data...");
+        axios.get('http://localhost:4000/api/movies')
+            .then((response) => {
+                setData(response.data);
+            })
+            .catch((error) => {
+                console.error("Error reloading data:", error);
+            });
+    };
+    // This useEffect hook runs once when the component mounts and calls the Reload function to fetch the movie data from the backend
+    useEffect(() => {
+        Reload();
+    }, []);
+// This component fetches movie data from the backend and displays it using the Movies component
+    return (
+        <div>
+            <h2>Movie List</h2>
+            <Movies myMovies={data} ReloadData={Reload} />
+        </div>
+    );
 }
 
 export default Read;

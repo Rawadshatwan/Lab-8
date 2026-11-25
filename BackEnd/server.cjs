@@ -30,14 +30,13 @@ app.use(bodyParser.json());
     poster: String
   });
  
-  const MovieModel = mongoose.model('MyMovie2', movieSchema);
+  const Movie = mongoose.model('MyMovie2', movieSchema);
 
   // This is the endpoint that will be used to create a new movie in the database
  app.post('/api/movies', async (req, res)=>{
 
  const { title, year, poster } = req.body;
-
- const newMovie = new MovieModel({ title, year, poster });
+ const newMovie = new Movie({ title, year, poster });
  await newMovie.save();
 
  res.status(201).json({ message: 'Movie created successfully', movie: newMovie });
@@ -47,6 +46,19 @@ app.use(bodyParser.json());
 app.get('/api/movie/:id', async (req, res) => {
   const movie = await Movie.findById(req.params.id);
   res.send(movie);
+});
+
+app.get('/api/movies', async (req, res) => {
+  const movies = await Movie.find({});
+  res.json(movies);
+});
+
+ // This will delete the movie with the given ID from the database
+app.delete('/api/movie/:id', async (req, res) => {
+  console.log('Deleting movie with ID:', req.params.id);
+  const movie = await Movie.findByIdAndDelete(req.params.id);
+  res.status(200).send({ message: "Movie deleted successfully", movie });
+  console.log('Deleted movie:', movie);
 });
 
 // This is the endpoint that will be used to fetch the movie data from the server
